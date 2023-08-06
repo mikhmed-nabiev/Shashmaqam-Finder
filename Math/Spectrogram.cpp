@@ -19,8 +19,8 @@ vector<double> ConvertTodB(const vector<complex>& amplitudes) {
 vector<vector<double>> GenerateSpectrogram(const vector<double>& samples,
                                            double stride_percent,
                                            double window_ms) {
-  auto stride = static_cast<size_t>(0.001 * kRate * stride_percent * window_ms);
-  auto window_size = static_cast<size_t>(0.001 * kRate * window_ms);
+  auto stride = static_cast<size_t>(0.001 * kSamplingRate * stride_percent * window_ms);
+  auto window_size = static_cast<size_t>(0.001 * kSamplingRate * window_ms);
 
   size_t audio_size = samples.size();
 
