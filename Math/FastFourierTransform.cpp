@@ -1,12 +1,13 @@
-#include "FastFourierTransform.h"
+#include "FastFourierTransform.hpp"
 
 template <class Field>
-std::vector<typename FFTConverter<Field>::ObjectType> FFTConverter<Field>::Convert(
-    const std::vector<int64_t>& poly) {
+vector<typename FFTConverter<Field>::ObjectType> FFTConverter<Field>::Convert(
+    const vector<double>& poly) {
   size_t size = poly.size();
-  std::vector<ObjectType> dft(poly.begin(), poly.end());
+  vector<double> dft(poly.begin(), poly.end());
   if (!IsPowerOfTwo(size)) {
-    throw std::runtime_error("not a power of two");
+    dft.resize(GetNearestPowerOfTwo(size));
+//    throw std::runtime_error("not a power of two");
   }
 
   BitPermute(dft);
@@ -30,9 +31,9 @@ std::vector<typename FFTConverter<Field>::ObjectType> FFTConverter<Field>::Conve
 }
 
 template <class IField>
-std::vector<int64_t> FFTConverter<IField>::Invert(const std::vector<ObjectType>& dft) {
+vector<double> FFTConverter<IField>::Invert(const vector<ObjectType>& dft) {
   size_t size = dft.size();
-  std::vector<ObjectType > dft_cpy(dft);
+  vector<ObjectType> dft_cpy(dft);
   if (!IsPowerOfTwo(size)) {
     throw std::runtime_error("not a power of two");
   }
@@ -53,7 +54,8 @@ std::vector<int64_t> FFTConverter<IField>::Invert(const std::vector<ObjectType>&
       }
     }
   }
-  std::vector<int64_t> poly(size);
+
+  vector<double> poly(size);
   for (size_t i = 0; i < size; ++i) {
     poly[i] = round((dft_cpy[i].real() / size));
   }
@@ -62,7 +64,7 @@ std::vector<int64_t> FFTConverter<IField>::Invert(const std::vector<ObjectType>&
 }
 
 template <class IField>
-void FFTConverter<IField>::BitPermute(std::vector<ObjectType>& vec) {
+void FFTConverter<IField>::BitPermute(vector<ObjectType>& vec) {
   size_t size = vec.size();
   for (size_t j = 0, i = 1; i < size; ++i) {
     size_t bit = size >> 1;
@@ -76,4 +78,11 @@ void FFTConverter<IField>::BitPermute(std::vector<ObjectType>& vec) {
       std::swap(vec[i], vec[j]);
     }
   }
+}
+
+template<class Field>
+int64_t FFTConverter<Field>::GetNearestPowerOfTwo(int64_t n) {
+  int64_t power = 1;
+  while ((1 << power) < n) ++power;
+  return (1 << power);
 }
