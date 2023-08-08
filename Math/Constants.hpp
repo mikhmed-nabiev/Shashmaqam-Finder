@@ -5,6 +5,7 @@
 #ifndef SHASHMAQAMFINDER_MATH_UTILS_HPP_
 #define SHASHMAQAMFINDER_MATH_UTILS_HPP_
 
+#pragma once
 #include <cstdint>
 #include <numbers>
 

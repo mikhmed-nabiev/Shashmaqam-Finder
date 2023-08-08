@@ -4,6 +4,7 @@
 #ifndef SHASHMAQAMFINDER_MATH_SPECTOGRAM_HPP_
 #define SHASHMAQAMFINDER_MATH_SPECTOGRAM_HPP_
 
+#pragma once
 #include "FastFourierTransform.hpp"
 #include <vector>
 
