@@ -19,19 +19,19 @@ AudioRecorder::~AudioRecorder() {
   Pa_Terminate();
 }
 
-void AudioRecorder::StartRecording(int durationInSeconds) {
+void AudioRecorder::StartRecording(int duration_in_seconds) {
   if (recording_) {
     std::string message = "Error: Recording is already in progress";
     throw PortAudioException(message);
   }
 
-  recordedData_.clear();
+  recorded_data_.clear();
 
   PaError err;
   err = Pa_OpenDefaultStream(&stream_, constant::numInputChannels,
                              constant::numOutputChannels, paFloat32,
                              constant::kSamplingRate,
-                             paFramesPerBufferUnspecified, audioCallback, this);
+                             paFramesPerBufferUnspecified, AudioCallback, this);
   if (err != paNoError) {
     std::string message = "PortAudio error: ";
     message += Pa_GetErrorText(err);
@@ -46,7 +46,7 @@ void AudioRecorder::StartRecording(int durationInSeconds) {
   }
   recording_ = true;
 
-  Pa_Sleep(durationInSeconds * 1000);
+  Pa_Sleep(duration_in_seconds * 1000);
   StopRecording();
 }
 
@@ -65,17 +65,16 @@ void AudioRecorder::StopRecording() {
   }
 }
 
-int AudioRecorder::audioCallback(const void *inputBuffer, void *outputBuffer,
-                                 unsigned long framesPerBuffer,
-                                 const PaStreamCallbackTimeInfo *timeInfo,
-                                 PaStreamCallbackFlags statusFlags,
-                                 void *userData) {
+int AudioRecorder::AudioCallback(const void *input_buffer, void *output_buffer,
+                           unsigned long frames_per_buffer,
+                           const PaStreamCallbackTimeInfo *time_info,
+                           PaStreamCallbackFlags status_flags, void *user_data) {
 
-  auto *recorder = static_cast<AudioRecorder *>(userData);
-  const auto *input = static_cast<const double *>(inputBuffer);
+  auto *recorder = static_cast<AudioRecorder *>(user_data);
+  const auto *input = static_cast<const double *>(input_buffer);
 
-  for (unsigned i = 0; i < framesPerBuffer; ++i) {
-    recorder->recordedData_.push_back(input[i]);
+  for (unsigned i = 0; i < frames_per_buffer; ++i) {
+    recorder->recorded_data_.push_back(input[i]);
   }
 
   return paContinue;

@@ -9,22 +9,22 @@ public:
   AudioRecorder();
   ~AudioRecorder();
 
-  void StartRecording(int durationInSeconds);
+  void StartRecording(int duration_in_seconds);
   void StopRecording();
 
   inline bool IsRecording() const { return recording_; }
 
-  inline std::vector<double> &GetRecordedData() { return recordedData_; }
+  inline std::vector<double> &GetRecordedData() { return recorded_data_; }
 
 private:
-  static int audioCallback(const void *inputBuffer, void *outputBuffer,
-                           unsigned long framesPerBuffer,
-                           const PaStreamCallbackTimeInfo *timeInfo,
-                           PaStreamCallbackFlags statusFlags, void *userData);
+  static int AudioCallback(const void *input_buffer, void *output_buffer,
+                           unsigned long frames_per_buffer,
+                           const PaStreamCallbackTimeInfo *time_info,
+                           PaStreamCallbackFlags status_flags, void *user_data);
 
   PaStream *stream_;
   bool recording_;
-  std::vector<double> recordedData_;
+  std::vector<double> recorded_data_;
 };
 
 #endif // SHASHMAQAMFINDER_AUDIOMODULE_AUDIORECORDER_HPP_
