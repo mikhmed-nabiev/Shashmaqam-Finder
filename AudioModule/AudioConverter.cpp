@@ -2,7 +2,7 @@
 #include "AudioExceptions.cpp"
 #include <iostream>
 
-AudioConverter::AudioConverter(const std::string &file_name, int bytes_per_sample)
+AudioConverter::AudioConverter(const std::string& file_name, int bytes_per_sample)
     : file_name_(file_name), bytes_per_sample_(bytes_per_sample) {
   std::ifstream audio_file(file_name_, std::ios::binary);
   if (!audio_file) {
@@ -16,7 +16,7 @@ AudioConverter::AudioConverter(const std::string &file_name, int bytes_per_sampl
   audio_file.close();
 }
 
-void AudioConverter::ReadWavHeader(std::ifstream &audio_file) {
+void AudioConverter::ReadWavHeader(std::ifstream& audio_file) {
   char chunk_id[4];
   uint32_t chunk_size;
   char format[4];
@@ -27,7 +27,7 @@ void AudioConverter::ReadWavHeader(std::ifstream &audio_file) {
     throw AudioConverterException(message);
   }
 
-  audio_file.read(reinterpret_cast<char *>(&chunk_size), 4);
+  audio_file.read(reinterpret_cast<char*>(&chunk_size), 4);
 
   audio_file.read(format, 4);
   if (std::string(format, 4) != "WAVE") {
@@ -45,13 +45,13 @@ void AudioConverter::ReadWavHeader(std::ifstream &audio_file) {
   uint16_t bits_per_sample;
 
   audio_file.read(subchunk1ID, 4);
-  audio_file.read(reinterpret_cast<char *>(&subchunk1_size), 4);
-  audio_file.read(reinterpret_cast<char *>(&audio_format), 2);
-  audio_file.read(reinterpret_cast<char *>(&num_channels), 2);
-  audio_file.read(reinterpret_cast<char *>(&sample_rate), 4);
-  audio_file.read(reinterpret_cast<char *>(&byte_rate), 4);
-  audio_file.read(reinterpret_cast<char *>(&block_align), 2);
-  audio_file.read(reinterpret_cast<char *>(&bits_per_sample), 2);
+  audio_file.read(reinterpret_cast<char*>(&subchunk1_size), 4);
+  audio_file.read(reinterpret_cast<char*>(&audio_format), 2);
+  audio_file.read(reinterpret_cast<char*>(&num_channels), 2);
+  audio_file.read(reinterpret_cast<char*>(&sample_rate), 4);
+  audio_file.read(reinterpret_cast<char*>(&byte_rate), 4);
+  audio_file.read(reinterpret_cast<char*>(&block_align), 2);
+  audio_file.read(reinterpret_cast<char*>(&bits_per_sample), 2);
 
   // Validate audio format (assuming PCM for simplicity)
   if (audio_format != 1) {
@@ -63,13 +63,13 @@ void AudioConverter::ReadWavHeader(std::ifstream &audio_file) {
   audio_file.seekg(4 + 4 + subchunk1_size, std::ios::beg);
 }
 
-void AudioConverter::ReadAudioData(std::ifstream &file) {
+void AudioConverter::ReadAudioData(std::ifstream& file) {
   constexpr int16_t MAX_INT_16 = 32767;
   constexpr int32_t MAX_INT_32 = 2147483647;
 
   while (!file.eof()) {
     int32_t sample;
-    file.read(reinterpret_cast<char *>(&sample), bytes_per_sample_);
+    file.read(reinterpret_cast<char*>(&sample), bytes_per_sample_);
 
     if (!file.eof()) {
       double value;

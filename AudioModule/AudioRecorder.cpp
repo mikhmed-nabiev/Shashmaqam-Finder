@@ -46,7 +46,7 @@ void AudioRecorder::StartRecording(int duration_in_seconds) {
   }
   recording_ = true;
 
-  Pa_Sleep(duration_in_seconds * 1000);
+  Pa_Sleep(duration_in_seconds*  1000);
   StopRecording();
 }
 
@@ -65,13 +65,13 @@ void AudioRecorder::StopRecording() {
   }
 }
 
-int AudioRecorder::AudioCallback(const void *input_buffer, void *output_buffer,
+int AudioRecorder::AudioCallback(const void* input_buffer, void* output_buffer,
                            unsigned long frames_per_buffer,
-                           const PaStreamCallbackTimeInfo *time_info,
-                           PaStreamCallbackFlags status_flags, void *user_data) {
+                           const PaStreamCallbackTimeInfo* time_info,
+                           PaStreamCallbackFlags status_flags, void* user_data) {
 
-  auto *recorder = static_cast<AudioRecorder *>(user_data);
-  const auto *input = static_cast<const double *>(input_buffer);
+  auto* recorder = static_cast<AudioRecorder* >(user_data);
+  const auto* input = static_cast<const double* >(input_buffer);
 
   for (unsigned i = 0; i < frames_per_buffer; ++i) {
     recorder->recorded_data_.push_back(input[i]);
