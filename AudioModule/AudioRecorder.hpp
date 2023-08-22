@@ -9,12 +9,12 @@ public:
   AudioRecorder();
   ~AudioRecorder();
 
-  void startRecording(int durationInSeconds);
-  void stopRecording();
+  void StartRecording(int durationInSeconds);
+  void StopRecording();
 
-  inline bool isRecording() const { return recording_; }
+  inline bool IsRecording() const { return recording_; }
 
-  inline std::vector<double> &getRecordedData() { return recordedData_; }
+  inline std::vector<double> &GetRecordedData() { return recordedData_; }
 
 private:
   static int audioCallback(const void *inputBuffer, void *outputBuffer,

@@ -10,13 +10,13 @@ AudioConverter::AudioConverter(const std::string &fileName, int bytesPerSample)
     throw AudioConverterException(message);
   }
 
-  readWavHeader(audioFile);
-  readAudioData(audioFile);
+  ReadWavHeader(audioFile);
+  ReadAudioData(audioFile);
 
   audioFile.close();
 }
 
-void AudioConverter::readWavHeader(std::ifstream &audioFile) {
+void AudioConverter::ReadWavHeader(std::ifstream &audioFile) {
   char chunkID[4];
   uint32_t chunkSize;
   char format[4];
@@ -63,7 +63,7 @@ void AudioConverter::readWavHeader(std::ifstream &audioFile) {
   audioFile.seekg(4 + 4 + subchunk1Size, std::ios::beg);
 }
 
-void AudioConverter::readAudioData(std::ifstream &file) {
+void AudioConverter::ReadAudioData(std::ifstream &file) {
   constexpr int16_t MAX_INT_16 = 32767;
   constexpr int32_t MAX_INT_32 = 2147483647;
 

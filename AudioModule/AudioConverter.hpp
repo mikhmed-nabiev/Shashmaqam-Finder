@@ -9,11 +9,11 @@ class AudioConverter {
 public:
   AudioConverter(const std::string &fileName, int bytesPerSample = 2);
 
-  inline std::vector<double> get_data() const { return audioData_; }
+  inline std::vector<double> GetData() const { return audioData_; }
 
 private:
-  void readWavHeader(std::ifstream &file);
-  void readAudioData(std::ifstream &file);
+  void ReadWavHeader(std::ifstream &file);
+  void ReadAudioData(std::ifstream &file);
 
   std::string fileName_;
   int bytesPerSample_;

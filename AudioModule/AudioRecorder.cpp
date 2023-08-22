@@ -19,7 +19,7 @@ AudioRecorder::~AudioRecorder() {
   Pa_Terminate();
 }
 
-void AudioRecorder::startRecording(int durationInSeconds) {
+void AudioRecorder::StartRecording(int durationInSeconds) {
   if (recording_) {
     std::string message = "Error: Recording is already in progress";
     throw PortAudioException(message);
@@ -47,10 +47,10 @@ void AudioRecorder::startRecording(int durationInSeconds) {
   recording_ = true;
 
   Pa_Sleep(durationInSeconds * 1000);
-  stopRecording();
+  StopRecording();
 }
 
-void AudioRecorder::stopRecording() {
+void AudioRecorder::StopRecording() {
   if (!recording_) {
     std::string message = "Error: Recording is not in started";
     throw PortAudioException(message);

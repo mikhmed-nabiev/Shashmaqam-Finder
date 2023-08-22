@@ -10,7 +10,6 @@
 #include <numbers>
 
 namespace constant {
-  const uint64_t kSamplingRate = 44100;
   const double kPi = std::numbers::pi;
   const double kEps = 1e-6;
   const uint64_t kSamplingRate = 44100;
