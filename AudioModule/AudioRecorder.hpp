@@ -1,34 +1,30 @@
-//
-// Created by Akhmedov R on 07.08.2023.
-//
-#ifndef AUDIO_RECORDER_HPP
-#define AUDIO_RECORDER_HPP
+#ifndef SHASHMAQAMFINDER_AUDIOMODULE_AUDIORECORDER_HPP_
+#define SHASHMAQAMFINDER_AUDIOMODULE_AUDIORECORDER_HPP_
 
 #include <portaudio.h>
 #include <vector>
 
-class AudioRecorder{
- public:
+class AudioRecorder {
+public:
   AudioRecorder();
   ~AudioRecorder();
 
   void startRecording(int durationInSeconds);
   void stopRecording();
 
-  bool isRecording() const;
+  inline bool isRecording() const { return recording_; }
 
-  std::vector<double>& getRecordedData();
+  inline std::vector<double> &getRecordedData() { return recordedData_; }
 
- private:
+private:
   static int audioCallback(const void *inputBuffer, void *outputBuffer,
                            unsigned long framesPerBuffer,
                            const PaStreamCallbackTimeInfo *timeInfo,
-                           PaStreamCallbackFlags statusFlags,
-                           void *userData);
+                           PaStreamCallbackFlags statusFlags, void *userData);
 
-  PaStream* stream_;
+  PaStream *stream_;
   bool recording_;
   std::vector<double> recordedData_;
 };
 
-#endif // AUDIO_RECORDER_HPP
+#endif // SHASHMAQAMFINDER_AUDIOMODULE_AUDIORECORDER_HPP_

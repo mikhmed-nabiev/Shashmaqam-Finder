@@ -1,26 +1,23 @@
-//
-// Created by Akhmedov R on 07.08.2023.
-//
-#ifndef AUDIO_RECORDER_HPP
-#define AUDIO_RECORDER_HPP
+#ifndef SHASHMAQAMFINDER_AUDIOMODULE_AUDIOCONVERTER_HPP_
+#define SHASHMAQAMFINDER_AUDIOMODULE_AUDIOCONVERTER_HPP_
 
-#include <vector>
-#include <fstream>
 #include <cstdint>
+#include <fstream>
+#include <vector>
 
-class AudioConverter{
- public:
-  AudioConverter(const std::string& fileName, int bytesPerSample = 2);
+class AudioConverter {
+public:
+  AudioConverter(const std::string &fileName, int bytesPerSample = 2);
 
-  std::vector<double> get_data() const;
+  inline std::vector<double> get_data() const { return audioData_; }
 
- private:
-  void readWavHeader(std::ifstream& file);
-  void readAudioData(std::ifstream& file);
+private:
+  void readWavHeader(std::ifstream &file);
+  void readAudioData(std::ifstream &file);
 
   std::string fileName_;
   int bytesPerSample_;
   std::vector<double> audioData_;
 };
 
-#endif
+#endif // SHASHMAQAMFINDER_AUDIOMODULE_AUDIOCONVERTER_HPP_
