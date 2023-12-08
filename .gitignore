@@ -8,3 +8,7 @@ links.md
 *.mp3
 *.wav
 *.txt
+metadata.cpp
+build*/
+Makefile
+main.cpp

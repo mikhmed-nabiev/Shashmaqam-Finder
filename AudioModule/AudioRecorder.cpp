@@ -1,5 +1,5 @@
 #include "AudioRecorder.hpp"
-#include "Math/Constants.hpp"
+#include "../Math/Constants.hpp"
 #include "AudioExceptions.cpp"
 
 AudioRecorder::AudioRecorder() : stream_(nullptr), recording_(false) {
