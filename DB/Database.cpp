@@ -112,7 +112,7 @@ void DataBase::AddHash(const Hash& hash) {
 }
 
 /*
-  BUG : There's bag after second query "Smth with API issue"
+  BUG : There's bag after second query "Smth with API issueR"
 */
 std::unordered_map<int, std::unordered_map<int, int>> DataBase::GetMatches(
     const std::vector<std::pair<std::string, int>>& hashValues,
