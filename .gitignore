@@ -12,3 +12,9 @@ metadata.cpp
 build*/
 Makefile
 main.cpp
+trash.cpp
+*.o
+*.db
+*.sqbpro
+*.db-journal
+music/*
