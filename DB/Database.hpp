@@ -8,18 +8,19 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 
 class Song {
  public:
   Song(const std::string& artist, const std::string& title,
-       const std::string& album, int song_id_);
-  Song(const std::string& file_path, int song_id_);
+       const std::string& album, int64_t song_id_);
+  Song(const std::string& file_path, int64_t song_id_);
 
   // Getters
   std::string getArtist() const;
   std::string getAlbum() const;
   std::string getName() const;
-  int getID() const;
+  int64_t getID() const;
 
   // bool operator =(const Song& other);
 
@@ -27,22 +28,22 @@ class Song {
   std::string artist_;
   std::string title_;
   std::string album_;
-  int song_id_;
+  int64_t song_id_;
 };
 
 class Hash {
  public:
-  Hash(const std::string& hashValue, const int offset, const int ID);
+  Hash(const std::string& hashValue, const int64_t offset, const int64_t ID);
 
   // Getters
   std::string getHashValue() const;
-  int getID() const;
-  int getOffset() const;
+  int64_t getID() const;
+  int64_t getOffset() const;
 
  private:
   std::string hash_value_;
-  int offset_;
-  int id_;
+  int64_t offset_;
+  int64_t id_;
 };
 
 class DataBase {
@@ -50,15 +51,15 @@ class DataBase {
   DataBase(const std::string& name);
   ~DataBase();
 
-  Song getBestMatch(
+  std::optional<Song> getBestMatch(
       const std::vector<std::pair<std::string, int>>& HashValues) const;
 
-  Song GetSongById(const int id) const;
+  std::optional<Song> GetSongById(const int64_t id) const;
 
   void AddSong(const Song& song);
   void AddHash(const Hash& hash);
 
-  int getSongRowCount() const;
+  int64_t getSongRowCount() const;
 
  private:
   sqlite3* db_;
@@ -67,9 +68,19 @@ class DataBase {
   void CreateTables();
   void ExecuteQuery(const std::string& query);
 
+  Song ExtractSongFromStatement(sqlite3_stmt* statement) const;
+
   std::unordered_map<int, std::unordered_map<int, int>> GetMatches(
       const std::vector<std::pair<std::string, int>>& HashValues,
-      int threshold = 5) const;
+      int64_t threshold = 5) const;
+
+  void ProcessHashValue(const std::pair<std::string, int>& hashValue,
+                          std::unordered_map<int, std::unordered_map<int, int>>& songMatches,
+                          std::unordered_map<int, int>& songMatchCounts) const;
+  
+  void FilterMatches(std::unordered_map<int, std::unordered_map<int, int>>& songMatches,
+                                  const std::unordered_map<int, int>& songMatchCounts,
+                                  int64_t threshold) const;
 };
 
 #endif  // SHASHMAQAMFINDER_DATABASE_HPP_
