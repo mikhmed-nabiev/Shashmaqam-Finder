@@ -41,27 +41,27 @@ void Button::ChangeState() {
 
 void Button::Update() {
   if (is_pressed_) {
-    // if (change_cnt_ == 7000) {
-    //     dy_ *= -1;
-    //     change_cnt_ = 0;
-    // }
-    // float dy2 = dy_ / 2;
-    // float x1 = layer1_.getPosition().x, y1 = layer1_.getPosition().y;
-    // float x2 = layer2_.getPosition().x, y2 = layer2_.getPosition().y;
+    if (change_cnt_ == 7000) {
+        dy_ *= -1;
+        change_cnt_ = 0;
+    }
+    float dy2 = dy_ / 2;
+    float x1 = layer1_.getPosition().x, y1 = layer1_.getPosition().y;
+    float x2 = layer2_.getPosition().x, y2 = layer2_.getPosition().y;
     float radius1 = layer1_.getRadius(), radius2 = layer2_.getRadius();
-    // radius1 += dy_;
-    // radius2 += dy2;
+    radius1 += dy_;
+    radius2 += dy2;
 
-    // x1 -= dy_; x2 -= dy2;
-    // y1 -= dy_; y2 -= dy2;
+    x1 -= dy_; x2 -= dy2;
+    y1 -= dy_; y2 -= dy2;
 
     layer1_.setRadius(radius1);
-    // layer1_.setPosition(x1, y1);
+    layer1_.setPosition(x1, y1);
 
     layer2_.setRadius(radius2);
-    // layer2_.setPosition(x2, y2);
+    layer2_.setPosition(x2, y2);
 
-    // change_cnt_++;
+    change_cnt_++;
   }
   if (clock_.getElapsedTime().asSeconds() >= ANIMATION_TIME) {
     is_pressed_ = false;
