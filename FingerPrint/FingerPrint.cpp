@@ -1,10 +1,8 @@
 #include "FingerPrint.hpp"
 
-bool PeakSortEn = true;
+using namespace constant;
 
-constexpr int MIN_HASH_TIME_DELTA = 0;
-constexpr int MAX_HASH_TIME_DELTA = 200;
-constexpr int FINGERPRINT_REDUCTION = 20;
+bool PeakSortEn = true;
 
 std::string CalculateSHA1(const std::string& input) {
   unsigned char hash[FINGERPRINT_REDUCTION];
@@ -21,7 +19,7 @@ std::string CalculateSHA1(const std::string& input) {
 }
 
 std::vector<std::pair<std::string, int>> GenerateHashes(
-    std::vector<std::pair<int, int>>& peaks, const int fan_value = 5) {
+    std::vector<std::pair<int, int>>& peaks, const int64_t fan_value = 5) {
   // Sort peaks by time if PeakSort is enabled (enabling may improve performance
   // but accuracy will be damaged)
   if (PeakSortEn) {
@@ -34,11 +32,11 @@ std::vector<std::pair<std::string, int>> GenerateHashes(
 
   for (size_t i = 0; i < peaks.size(); i++) {
     for (size_t j = i + 1; j < i + fan_value && j < peaks.size(); j++) {
-      int freq1 = peaks[i].first;
-      int freq2 = peaks[j].first;
-      int time1 = peaks[i].second;
-      int time2 = peaks[j].second;
-      int time_delta = time2 - time1;
+      int64_t freq1 = peaks[i].first;
+      int64_t freq2 = peaks[j].first;
+      int64_t time1 = peaks[i].second;
+      int64_t time2 = peaks[j].second;
+      int64_t time_delta = time2 - time1;
       if (time_delta > MIN_HASH_TIME_DELTA &&
           time_delta < MAX_HASH_TIME_DELTA) {
         std::string input = std::to_string(freq1) + "|" +
@@ -53,17 +51,17 @@ std::vector<std::pair<std::string, int>> GenerateHashes(
 
 // TODO: Optimization
 std::vector<std::pair<int, int>> GetPeaks(
-    const std::vector<std::vector<double>>& spectrogram, int radius = 10) {
+    const std::vector<std::vector<double>>& spectrogram, int64_t radius = 10) {
   std::vector<std::pair<int, int>> peaks;
   std::vector<std::vector<double>> spectrogram_copy(
       spectrogram.size(), std::vector<double>(spectrogram[0].size()));
-  int width = spectrogram[0].size();
-  int height = spectrogram.size();
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
+  int64_t width = spectrogram[0].size();
+  int64_t height = spectrogram.size();
+  for (int64_t y = 0; y < height; y++) {
+    for (int64_t x = 0; x < width; x++) {
       double value = spectrogram[y][x];
-      for (int i = -radius; i <= radius; i++) {
-        for (int j = -radius; j <= radius; j++) {
+      for (int64_t i = -radius; i <= radius; i++) {
+        for (int64_t j = -radius; j <= radius; j++) {
           if (i == 0 && j == 0) {
             continue;
           }
@@ -80,8 +78,8 @@ std::vector<std::pair<int, int>> GetPeaks(
     }
   }
 
-  for (int y = 0; y < height - 1; y++) {
-    for (int x = 0; x < width; x++) {
+  for (int64_t y = 0; y < height - 1; y++) {
+    for (int64_t x = 0; x < width; x++) {
       if (spectrogram_copy[y][x] == spectrogram[y][x]) {
         peaks.push_back(std::make_pair(x, y));
       }
