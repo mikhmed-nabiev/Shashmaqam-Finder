@@ -11,7 +11,7 @@
 
 const float RADIUS_DELTA = 0.006f;
 const int ANIMATION_TIME = 10;
-const std::string FONT_PATH = "UI/assets/fonts/Roboto-Regular.ttf";
+const std::string FONT_PATH = "../UI/assets/fonts/Roboto-Regular.ttf";
 
 class Button : public sf::Drawable {
  public:
