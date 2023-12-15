@@ -32,7 +32,7 @@ void ShazamUI::InitUI() {
   label_.setOrigin(label_.getLocalBounds().width / 2,
                    label_.getLocalBounds().height / 2);
   label_.setPosition(window_.getSize().x / 2, 50.f);
-  data_ = std::make_unique<PopUp>();
+  data_ = std::make_unique<PopUp>(window_.getSize().x, 200, window_.getSize().y);
   shape_ = std::make_unique<Button>(window_.getSize().x / 2,
                                     window_.getSize().y / 2, 100.f);
 }

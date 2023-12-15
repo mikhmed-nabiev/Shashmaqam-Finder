@@ -1,10 +1,12 @@
 #include "PopUp.hpp"
 
-PopUp::PopUp() : visible_(false) {
+using namespace PopUpConstants;
+
+PopUp::PopUp(int width, int height, int window_height) : visible_(false) {
   // Set up the background_ rectangle
-  background_.setSize(sf::Vector2f(400, 200));
-  background_.setFillColor(sf::Color(15, 187, 255, 80));  // Semi-transparent black
-  background_.setPosition(0, 500);
+  background_.setSize(sf::Vector2f(width, height));
+  background_.setFillColor(ButtonConstants::LAYER_COLOR);
+  background_.setPosition(0, window_height - height);
 
   font_ = std::make_unique<sf::Font>();
   if (!font_->loadFromFile(FONT_PATH)) {
@@ -12,11 +14,11 @@ PopUp::PopUp() : visible_(false) {
   }
   song_name_text_.setFont(*font_.get());
   song_name_text_.setFillColor(sf::Color::Black);
-  song_name_text_.setPosition(20, 540);
+  song_name_text_.setPosition(X_MARGIN, window_height - Y_MARGIN - LINE_SPACING);
 
   song_artist_text_.setFont(*font_.get());
   song_artist_text_.setFillColor(sf::Color::Black);
-  song_artist_text_.setPosition(20, 600);
+  song_artist_text_.setPosition(X_MARGIN, window_height - LINE_SPACING);
 }
 
 void PopUp::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -31,8 +33,8 @@ void PopUp::ChangeState() { visible_ = !visible_; }
 
 void PopUp::SetData(const std::string& song_name,
                     const std::string& song_artist) {
-  song_name_text_.setString("Name : " + song_name);
-  song_artist_text_.setString("Artist : " + song_artist);
+  song_name_text_.setString(TITLE + " - " + song_name);
+  song_artist_text_.setString(ARTIST + " - " + song_artist);
 }
 
 bool PopUp::IsEmpty() const {

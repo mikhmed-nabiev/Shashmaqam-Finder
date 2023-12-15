@@ -2,21 +2,23 @@
 
 #include <iostream>
 
+using namespace ButtonConstants;
+
 Button::Button(float x, float y, float radius)
     : shape_(radius),
-      layer1_(radius * 1.4f),
-      layer2_(radius * 1.2f),
+      layer1_(radius * LAYER1_SCALE),
+      layer2_(radius * LAYER2_SCALE),
       is_pressed_(false),
       change_cnt_(0),
       dy_(RADIUS_DELTA) {
   shape_.setPosition(x - radius, y - radius);
-  shape_.setFillColor(sf::Color(15, 187, 255));
+  shape_.setFillColor(BUTTON_COLOR);
 
-  layer1_.setPosition(x - radius * 1.4f, y - radius * 1.4f);
-  layer1_.setFillColor(sf::Color(15, 187, 255, 50));
+  layer1_.setPosition(x - radius * LAYER1_SCALE, y - radius * LAYER1_SCALE);
+  layer1_.setFillColor(LAYER_COLOR);
 
-  layer2_.setPosition(x - radius * 1.2f, y - radius * 1.2f);
-  layer2_.setFillColor(sf::Color(15, 187, 255, 80));
+  layer2_.setPosition(x - radius * LAYER2_SCALE, y - radius * LAYER2_SCALE);
+  layer2_.setFillColor(LAYER_COLOR);
 
   font_ = std::make_unique<sf::Font>();
   if (!font_->loadFromFile(FONT_PATH)) {
@@ -26,7 +28,7 @@ Button::Button(float x, float y, float radius)
   label_.setFont(*font_.get());
   label_.setFillColor(sf::Color::Black);
 
-  label_.setString("Surf");
+  label_.setString(BUTTON_TEXT);
   label_.setPosition(x - label_.getLocalBounds().width / 2.f,
                      y - label_.getLocalBounds().height);
   label_.setCharacterSize(40);

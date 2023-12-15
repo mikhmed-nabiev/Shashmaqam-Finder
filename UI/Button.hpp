@@ -9,9 +9,18 @@
 #include <SFML/System/Clock.hpp>
 #include <memory>
 
-const float RADIUS_DELTA = 0.006f;
-const int ANIMATION_TIME = 10;
 const std::string FONT_PATH = "../UI/assets/fonts/Roboto-Regular.ttf";
+
+namespace ButtonConstants {
+  const float RADIUS_DELTA = 0.006f;
+  const int ANIMATION_TIME = 10;
+
+  const sf::Color BUTTON_COLOR = sf::Color(15, 187, 255);
+  const sf::Color LAYER_COLOR = sf::Color(15, 187, 255, 50);
+  const float LAYER1_SCALE = 1.4f;
+  const float LAYER2_SCALE = 1.2f;
+  const std::string BUTTON_TEXT = "Surf";
+}
 
 class Button : public sf::Drawable {
  public:

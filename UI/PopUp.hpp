@@ -8,9 +8,16 @@
 
 #include "Button.hpp"
 
+namespace PopUpConstants {
+  const std::string ARTIST = "Artist";
+  const std::string TITLE = "Title";
+  const int Y_MARGIN = 60;
+  const int X_MARGIN = 20;
+  const int LINE_SPACING = 100;
+}
 class PopUp : public sf::Drawable {
  public:
-  PopUp();
+  PopUp(int width, int height, int window_height);
 
   void ChangeState();
 
