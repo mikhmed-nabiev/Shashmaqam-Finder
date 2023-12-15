@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace constant {
+namespace FingerPrintConstants {
   constexpr int64_t MIN_HASH_TIME_DELTA = 0;
   constexpr int64_t MAX_HASH_TIME_DELTA = 150;
   constexpr int64_t FINGERPRINT_REDUCTION = 20;

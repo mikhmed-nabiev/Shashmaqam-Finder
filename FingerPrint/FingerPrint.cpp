@@ -1,6 +1,6 @@
 #include "FingerPrint.hpp"
 
-using namespace constant;
+using namespace FingerPrintConstants;
 
 bool PeakSortEn = true;
 
