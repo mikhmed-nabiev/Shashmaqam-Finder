@@ -37,7 +37,7 @@ std::string Song::getArtist() const { return artist_; }
 
 std::string Song::getAlbum() const { return album_; }
 
-std::string Song::getName() const { return title_; }
+std::string Song::getTitle() const { return title_; }
 
 int64_t Song::getID() const { return song_id_; }
 
@@ -67,6 +67,8 @@ DataBase::DataBase(const std::string& db_name) : db_name_(db_name) {
 
 DataBase::~DataBase() { sqlite3_close(db_); }
 
+sqlite3* DataBase::GetDb() const { return db_; }
+
 void DataBase::CreateTables() {
   // Create SONG table with unique ID
   ExecuteQuery(
@@ -92,7 +94,8 @@ void DataBase::ExecuteQuery(const std::string& query) {
 void DataBase::AddSong(const Song& song) {
   std::string query = "INSERT INTO SONG (ID, Artist, Album, Name) VALUES (" +
                       std::to_string(song.getID()) + ", '" + song.getArtist() +
-                      "', '" + song.getAlbum() + "', '" + song.getName() + "')";
+                      "', '" + song.getAlbum() + "', '" + song.getTitle() +
+                      "')";
 
   ExecuteQuery(query);
 }
@@ -130,9 +133,9 @@ std::optional<Song> DataBase::GetSongById(const int64_t id) const {
 Song DataBase::ExtractSongFromStatement(sqlite3_stmt* statement) const {
   const char* ptr_artist =
       reinterpret_cast<const char*>(sqlite3_column_text(statement, 1));
-  const char* ptr_title =
-      reinterpret_cast<const char*>(sqlite3_column_text(statement, 2));
   const char* ptr_album =
+      reinterpret_cast<const char*>(sqlite3_column_text(statement, 2));
+  const char* ptr_title =
       reinterpret_cast<const char*>(sqlite3_column_text(statement, 3));
 
   std::string artist = (ptr_artist != nullptr) ? ptr_artist : "";
@@ -143,79 +146,121 @@ Song DataBase::ExtractSongFromStatement(sqlite3_stmt* statement) const {
   return Song(artist, title, album, song_id);
 }
 
-// Function to process a single hash value and update matches
-void DataBase::ProcessHashValue(
-    const std::pair<std::string, int>& hashValue,
-    std::unordered_map<int, std::unordered_map<int, int>>& songMatches,
-    std::unordered_map<int, int>& songMatchCounts) const {
-  std::string query = "SELECT SONGID, Offset FROM HASHES WHERE HashValue = '" +
-                      hashValue.first + "'";
-  sqlite3_stmt* statement;
-
-  if (sqlite3_prepare_v2(db_, query.c_str(), -1, &statement, nullptr) ==
-      SQLITE_OK) {
-    while (sqlite3_step(statement) == SQLITE_ROW) {
-      int64_t songId = sqlite3_column_int(statement, 0);
-      int64_t offset = sqlite3_column_int(statement, 1);
-      songMatches[songId][offset - hashValue.second]++;
-      songMatchCounts[songId]++;
+void DataBase::ProcessHashValuesBatch(
+    const std::vector<std::pair<std::string, int>>& hashValues,
+    std::unordered_map<int, std::vector<int>>& songMatches) const {
+  std::string query = "SELECT SONGID, Offset FROM HASHES WHERE HashValue IN (";
+  for (size_t i = 0; i < hashValues.size(); ++i) {
+    query += "?";
+    if (i < hashValues.size() - 1) {
+      query += ",";
     }
+  }
+  query += ")";
 
-    sqlite3_finalize(statement);
-  } else {
+  sqlite3_stmt* statement;
+  if (sqlite3_prepare_v2(db_, query.c_str(), -1, &statement, nullptr) !=
+      SQLITE_OK) {
     std::cerr << "Error preparing SQL statement: " << sqlite3_errmsg(db_)
               << std::endl;
+    return;
   }
-}
 
-void DataBase::FilterMatches(
-    std::unordered_map<int, std::unordered_map<int, int>>& songMatches,
-    const std::unordered_map<int, int>& songMatchCounts,
-    int64_t threshold) const {
-  for (auto it = songMatches.begin(); it != songMatches.end();) {
-    std::cout << it->first << " " << it->second.size() << ' '
-              << songMatchCounts.at(it->first) << std::endl;
-
-    if (songMatchCounts.at(it->first) < threshold) {
-      it = songMatches.erase(it);
-    } else {
-      ++it;
+  for (size_t i = 0; i < hashValues.size(); ++i) {
+    if (sqlite3_bind_text(statement, i + 1, hashValues[i].first.c_str(), -1,
+                          SQLITE_STATIC) != SQLITE_OK) {
+      std::cerr << "Error binding SQL statement: " << sqlite3_errmsg(db_)
+                << std::endl;
+      return;
     }
   }
-}
 
-std::unordered_map<int, std::unordered_map<int, int>> DataBase::GetMatches(
-    const std::vector<std::pair<std::string, int>>& hashValues,
-    int64_t threshold) const {
-  std::unordered_map<int, std::unordered_map<int, int>> songMatches;
-  std::unordered_map<int, int> songMatchCounts;
-
-  for (const auto& hashValue : hashValues) {
-    ProcessHashValue(hashValue, songMatches, songMatchCounts);
+  while (sqlite3_step(statement) == SQLITE_ROW) {
+    int64_t songId = sqlite3_column_int(statement, 0);
+    int64_t offset = sqlite3_column_int(statement, 1);
+    for (const auto& hashValue : hashValues) {
+      songMatches[songId].push_back(offset - hashValue.second);
+    }
   }
 
-  FilterMatches(songMatches, songMatchCounts, threshold);
+  sqlite3_finalize(statement);
+}
+
+void DataBase::BatchHashValues(
+    const std::vector<std::pair<std::string, int>>& hashValues,
+    std::function<void(const std::vector<std::pair<std::string, int>>&)>&&
+        processBatch) const {
+  for (size_t i = 0; i < hashValues.size(); i += BATCH_SIZE) {
+    size_t batchSize = std::min(BATCH_SIZE, hashValues.size() - i);
+    std::vector<std::pair<std::string, int>> batch(
+        hashValues.begin() + i, hashValues.begin() + i + batchSize);
+
+    processBatch(batch);
+  }
+}
+
+std::unordered_map<int, std::vector<int>> DataBase::GetMatches(
+    const std::vector<std::pair<std::string, int>>& hashValues,
+    int64_t threshold) const {
+  std::unordered_map<int, std::vector<int>> songMatches;
+
+  BatchHashValues(hashValues,
+                  [&](const std::vector<std::pair<std::string, int>>& batch) {
+                    ProcessHashValuesBatch(batch, songMatches);
+                  });
 
   return songMatches;
+}
+
+int ScoreMatch(const std::vector<int>& offsets) {
+  const double bin_width = 0.5;
+
+  int min_tk = *std::min_element(offsets.begin(), offsets.end());
+  int max_tk = *std::max_element(offsets.begin(), offsets.end());
+
+  int num_bins = static_cast<int>((max_tk - min_tk) / bin_width) + 1;
+  std::vector<int> hist(num_bins, 0);
+  int hist_mx = 0;
+  for (const auto& tk : offsets) {
+    int bin_index = static_cast<int>((tk - min_tk) / bin_width);
+    hist[bin_index]++;
+  }
+
+  return *std::max_element(hist.begin(), hist.end());
 }
 
 std::optional<Song> DataBase::getBestMatch(
     const std::vector<std::pair<std::string, int>>& hashValues) const {
   auto matches = GetMatches(hashValues);
-  int64_t id = 0;
-  int64_t cur_mx = 0;
+  int best_score = 0;
+  int64_t id = -1;
+  for (const auto& match : matches) {
+    int song_id = match.first;
+    const auto& offsets = match.second;
+    if (offsets.size() < best_score) {
+      continue;
+    }
+    int score = ScoreMatch(offsets);
 
-  for (const auto& [key, innerMap] : matches) {
-    for (const auto& [innerKey, value] : innerMap) {
-      if (value > cur_mx) {
-        id = key;
-        cur_mx = value;
-      }
+    std::optional<Song> song = GetSongById(song_id);
+
+    std::cout << song->getArtist() << " " << song->getTitle() << " - " << score
+              << std::endl;
+
+    if (score > best_score) {
+      best_score = score;
+      id = song_id;
     }
   }
 
   return GetSongById(id);
 }
+
+void DataBase::BeginTransaction() { ExecuteQuery("BEGIN TRANSACTION;"); }
+
+void DataBase::CommitTransaction() { ExecuteQuery("COMMIT;"); }
+
+void DataBase::RollbackTransaction() { ExecuteQuery("ROLLBACK;"); }
 
 int64_t DataBase::getSongRowCount() const {
   std::string query = "SELECT COUNT(*) FROM SONG";
