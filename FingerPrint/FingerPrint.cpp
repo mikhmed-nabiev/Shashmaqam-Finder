@@ -1,4 +1,5 @@
 #include "FingerPrint.hpp"
+// #include "Constants.hpp"
 
 using namespace FingerPrintConstants;
 
@@ -19,7 +20,7 @@ std::string CalculateSHA1(const std::string& input) {
 }
 
 std::vector<std::pair<std::string, int>> GenerateHashes(
-    std::vector<std::pair<int, int>>& peaks, const int64_t fan_value = 5) {
+    std::vector<std::pair<int, int>>& peaks) {
   // Sort peaks by time if PeakSort is enabled (enabling may improve performance
   // but accuracy will be damaged)
   if (PeakSortEn) {
@@ -31,7 +32,7 @@ std::vector<std::pair<std::string, int>> GenerateHashes(
   std::vector<std::pair<std::string, int>> hashes;
 
   for (size_t i = 0; i < peaks.size(); i++) {
-    for (size_t j = i + 1; j < i + fan_value && j < peaks.size(); j++) {
+    for (size_t j = i + 1; j < i + FAN_VALUE && j < peaks.size(); j++) {
       int64_t freq1 = peaks[i].first;
       int64_t freq2 = peaks[j].first;
       int64_t time1 = peaks[i].second;
@@ -51,7 +52,7 @@ std::vector<std::pair<std::string, int>> GenerateHashes(
 
 // TODO: Optimization
 std::vector<std::pair<int, int>> GetPeaks(
-    const std::vector<std::vector<double>>& spectrogram, int64_t radius = 10) {
+    const std::vector<std::vector<double>>& spectrogram) {
   std::vector<std::pair<int, int>> peaks;
   std::vector<std::vector<double>> spectrogram_copy(
       spectrogram.size(), std::vector<double>(spectrogram[0].size()));
@@ -60,8 +61,8 @@ std::vector<std::pair<int, int>> GetPeaks(
   for (int64_t y = 0; y < height; y++) {
     for (int64_t x = 0; x < width; x++) {
       double value = spectrogram[y][x];
-      for (int64_t i = -radius; i <= radius; i++) {
-        for (int64_t j = -radius; j <= radius; j++) {
+      for (int64_t i = -RADIUS; i <= RADIUS; i++) {
+        for (int64_t j = -RADIUS; j <= RADIUS; j++) {
           if (i == 0 && j == 0) {
             continue;
           }
@@ -88,7 +89,7 @@ std::vector<std::pair<int, int>> GetPeaks(
   return peaks;
 }
 
-std::vector<std::pair<std::string, int>> GetFingerPrints(
+std::vector<std::pair<std::string, int>> GenerateFingerPrints(
     std::vector<std::vector<double>>& spectogram) {
   std::vector<std::pair<int, int>> peaks = GetPeaks(spectogram);
   std::vector<std::pair<std::string, int>> hashes = GenerateHashes(peaks);
