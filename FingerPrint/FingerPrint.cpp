@@ -1,5 +1,4 @@
 #include "FingerPrint.hpp"
-// #include "Constants.hpp"
 
 using namespace FingerPrintConstants;
 

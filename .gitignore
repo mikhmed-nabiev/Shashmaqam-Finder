@@ -17,3 +17,4 @@ trash.cpp
 *.sqbpro
 *.db-journal
 music/*
+*.out
