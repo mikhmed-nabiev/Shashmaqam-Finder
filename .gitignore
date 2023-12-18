@@ -7,8 +7,14 @@ links.md
 .idea
 *.mp3
 *.wav
-*.txt
+# *.txt
 metadata.cpp
 build*/
 Makefile
-main.cpp
+trash.cpp
+*.o
+*.db
+*.sqbpro
+*.db-journal
+music/*
+*.out

@@ -6,12 +6,12 @@
 #include <vector>
 
 class AudioConverter {
-public:
+ public:
   AudioConverter(const std::string& file_name, int bytes_per_sample = 2);
 
   inline std::vector<double> GetData() const { return audio_data_; }
 
-private:
+ private:
   void ReadWavHeader(std::ifstream& file);
   void ReadAudioData(std::ifstream& file);
 
@@ -20,4 +20,4 @@ private:
   std::vector<double> audio_data_;
 };
 
-#endif // SHASHMAQAMFINDER_AUDIOMODULE_AUDIOCONVERTER_HPP_
+#endif  // SHASHMAQAMFINDER_AUDIOMODULE_AUDIOCONVERTER_HPP_

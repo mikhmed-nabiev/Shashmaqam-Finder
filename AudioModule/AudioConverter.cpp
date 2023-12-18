@@ -1,8 +1,11 @@
 #include "AudioConverter.hpp"
-#include "AudioExceptions.cpp"
+
 #include <iostream>
 
-AudioConverter::AudioConverter(const std::string& file_name, int bytes_per_sample)
+#include "AudioExceptions.cpp"
+
+AudioConverter::AudioConverter(const std::string& file_name,
+                               int bytes_per_sample)
     : file_name_(file_name), bytes_per_sample_(bytes_per_sample) {
   std::ifstream audio_file(file_name_, std::ios::binary);
   if (!audio_file) {
