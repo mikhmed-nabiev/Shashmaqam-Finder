@@ -1,0 +1,3 @@
+[submodule "lib/SimpleLogger"]
+	path = lib/SimpleLogger
+	url = git@github.com:PlungedInCode/SimpleLogger.git

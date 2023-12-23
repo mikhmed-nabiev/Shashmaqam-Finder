@@ -1,10 +1,10 @@
-#ifndef SHAZAM_UI_HPP
-#define SHAZAM_UI_HPP
+#ifndef UIMANAGER_HPP
+#define UIMANAGER_HPP
 
 #include <SFML/Graphics.hpp>
 #include "Button.hpp"
 #include "PopUp.hpp"
-// #include "AudioRecorder.hpp"
+#include "Logger.hpp"
 
 class ShazamUI {
 public:
@@ -33,4 +33,4 @@ private:
     std::unique_ptr<sf::Font> font_;
 };
 
-#endif // SHAZAM_UI_HPP
+#endif // UIMANAGER_HPP
