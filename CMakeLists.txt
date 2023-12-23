@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 20)
 # Include directories
 include_directories(AudioModule Math DB FingerPrint UI)
 
+add_subdirectory(lib/SimpleLogger)
+
 # Add your source files
 add_executable(Shashmaqam-Finder
     AudioModule/AudioConverter.cpp
@@ -18,9 +20,9 @@ add_executable(Shashmaqam-Finder
     FingerPrint/FingerPrint.cpp
     UI/Button.cpp
     UI/PopUp.cpp
-    UI/ShazamUI.cpp
+    UI/UIManager.cpp
     main.cpp
 )
 
 # Link libraries
-target_link_libraries(Shashmaqam-Finder portaudio ssl crypto tag sqlite3 sfml-graphics sfml-window sfml-system)
+target_link_libraries(Shashmaqam-Finder SimpleLogger portaudio ssl crypto tag sqlite3 sfml-graphics sfml-window sfml-system)

@@ -18,3 +18,4 @@ trash.cpp
 *.db-journal
 music/*
 *.out
+main.cpp
