@@ -1,4 +1,6 @@
 #include <string>
+#include "UI/UIManager.hpp"
+#include "Logger.hpp"
 #include "DB/Utils.hpp"
 
 using namespace Utils;
