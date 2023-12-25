@@ -48,6 +48,65 @@ std::vector<std::pair<std::string, int>> GenerateHashes(
   }
   return hashes;
 }
+/*
+ def peak_matrix(self, fraction=0.1, condition=2):
+        '''
+        Function that spots significant peaks in a given spectrogram.
+
+        Parameters
+        ----------
+            fraction (float) : Fraction of spectrogram band to compute local comparisons, value between 0 and 1. By default `fraction=0.1`.
+            condition (int)  : Axis in which we search the peaks. By default `condition=2`.
+                axis=0: Time-based search (By rows).
+                axis=0: Frequency-based search (By columns).
+                axis=2: Time-Frequency-based search (Row+Columns).
+        
+        Returns
+        ----------
+            id_peaks (np.array): Array with the position (t,f) in which the peaks appear.
+            peaks    (np.array): Array spectrogram-shaped just with the peaks in the same position.
+        '''
+        # Get Frenquency-Time-Spectrogram representations
+        spectromap.get_spectrogram(self)
+        
+        # Time based
+        if condition == 0:
+            # Transpose and flat the spectrogram
+            x = self.spectrogram.T
+            x = x.flatten()
+            # Find peaks according to the set length
+            d = int(fraction*self.spectrogram.shape[condition])
+            idx, _ = signal.find_peaks(x, distance=d)
+            # Get matrix with the position of the peaks
+            id_peaks = np.zeros(x.shape)
+            id_peaks[idx] = True
+            id_peaks = np.reshape(id_peaks, self.spectrogram.T.shape).T.astype('bool')
+
+        # Frequency based
+        elif condition == 1:
+            x = self.spectrogram.flatten()
+            # Find peaks according to the set length
+            d = int(fraction*self.spectrogram.shape[condition])
+            idx, _ = signal.find_peaks(x, distance=d)
+            # Get matrix with the position of the peaks
+            id_peaks = np.zeros(x.shape)
+            id_peaks[idx] = True
+            id_peaks = np.reshape(id_peaks, self.spectrogram.shape).astype('bool')
+
+        # Time-Frequency based
+        elif condition == 2:
+            # Find peaks for both axis
+            id_peaks0, _ = spectromap.peak_matrix(self, fraction, condition=0)
+            id_peaks1, _ = spectromap.peak_matrix(self, fraction, condition=1)
+            # Get just the points that are considered peaks in both axis
+            id_peaks = (id_peaks0.astype('int32') + id_peaks1.astype('int32')) == 2
+        
+        # Return just the peaks of the spectrogram
+        peaks = np.zeros(self.spectrogram.shape)
+        peaks[id_peaks] = self.spectrogram[id_peaks]
+
+        return id_peaks, peaks
+*/
 
 // TODO: Optimization
 std::vector<std::pair<int, int>> GetPeaks(

@@ -1,4 +1,5 @@
 #include "Database.hpp"
+#include "Logger.hpp"
 
 /*-------------------Song-------------------*/
 Song::Song(const std::string& artist, const std::string& title,
@@ -19,6 +20,9 @@ Song::Song(const std::string& file_path, const int64_t song_id)
       metadatas[idx] = curr_data;
       curr_data = "";
       idx++;
+      if (idx >= 3) {
+        break;
+      }
     } else {
       curr_data += it;
     }
@@ -244,8 +248,10 @@ std::optional<Song> DataBase::getBestMatch(
 
     std::optional<Song> song = GetSongById(song_id);
 
-    std::cout << song->getArtist() << " " << song->getTitle() << " - " << score
-              << std::endl;
+    LOG_TRACE(song->getArtist(), "-" ,song->getTitle(), "=", score);
+
+    // std::cout << song->getArtist() << " " << song->getTitle() << " - " << score
+    //           << std::endl;
 
     if (score > best_score) {
       best_score = score;

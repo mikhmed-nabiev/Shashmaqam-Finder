@@ -17,6 +17,7 @@ add_executable(Shashmaqam-Finder
     Math/Field.cpp
     Math/FastFourierTransform.cpp
     DB/Database.cpp
+    DB/Utils.cpp
     FingerPrint/FingerPrint.cpp
     UI/Button.cpp
     UI/PopUp.cpp
