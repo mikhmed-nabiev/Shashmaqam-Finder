@@ -26,4 +26,4 @@ add_executable(Shashmaqam-Finder
 )
 
 # Link libraries
-target_link_libraries(Shashmaqam-Finder SimpleLogger portaudio ssl crypto tag sqlite3 sfml-graphics sfml-window sfml-system)
+target_link_libraries(Shashmaqam-Finder SimpleLogger portaudio ssl crypto tag sqlite3 sfml-graphics sfml-window sfml-system sfml-audio)
