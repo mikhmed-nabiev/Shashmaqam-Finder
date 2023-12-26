@@ -10,6 +10,7 @@ PopUp::PopUp(int width, int height, int window_height) : visible_(false) {
 
   font_ = std::make_unique<sf::Font>();
   if (!font_->loadFromFile(FONT_PATH)) {
+    LOG_ERROR("Failed to load font");
     throw std::runtime_error("Couldn't load font");
   }
   song_name_text_.setFont(*font_.get());

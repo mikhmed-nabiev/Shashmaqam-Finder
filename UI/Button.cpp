@@ -22,7 +22,7 @@ Button::Button(float x, float y, float radius)
 
   font_ = std::make_unique<sf::Font>();
   if (!font_->loadFromFile(FONT_PATH)) {
-    std::cout << "Couldn't load font\n";
+    LOG_ERROR("Failed to load font");
   }
 
   label_.setFont(*font_.get());
@@ -38,14 +38,13 @@ Button::~Button() {}
 
 void Button::ChangeState() {
   is_pressed_ = !is_pressed_;
-  clock_.restart();
 }
 
 void Button::Update() {
   if (is_pressed_) {
     if (change_cnt_ == 7000) {
-        dy_ *= -1;
-        change_cnt_ = 0;
+      dy_ *= -1;
+      change_cnt_ = 0;
     }
     float dy2 = dy_ / 2;
     float x1 = layer1_.getPosition().x, y1 = layer1_.getPosition().y;
@@ -54,8 +53,10 @@ void Button::Update() {
     radius1 += dy_;
     radius2 += dy2;
 
-    x1 -= dy_; x2 -= dy2;
-    y1 -= dy_; y2 -= dy2;
+    x1 -= dy_;
+    x2 -= dy2;
+    y1 -= dy_;
+    y2 -= dy2;
 
     layer1_.setRadius(radius1);
     layer1_.setPosition(x1, y1);
@@ -64,10 +65,6 @@ void Button::Update() {
     layer2_.setPosition(x2, y2);
 
     change_cnt_++;
-  }
-  if (clock_.getElapsedTime().asSeconds() >= ANIMATION_TIME) {
-    is_pressed_ = false;
-    clock_.restart();
   }
 }
 
