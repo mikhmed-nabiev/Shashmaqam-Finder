@@ -9,6 +9,8 @@
 #include <SFML/System/Clock.hpp>
 #include <memory>
 
+#include "Logger.hpp"
+
 const std::string FONT_PATH = "../UI/assets/fonts/Roboto-Regular.ttf";
 
 namespace ButtonConstants {
