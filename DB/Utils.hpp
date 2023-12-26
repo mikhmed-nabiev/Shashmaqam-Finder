@@ -1,3 +1,6 @@
+#ifndef SHASHMAQAMFINDER_DATABASE_UTILS_HPP_
+#define SHASHMAQAMFINDER_DATABASE_UTILS_HPP_
+
 #include <filesystem>
 
 #include "Database.hpp"
@@ -12,3 +15,5 @@ namespace Utils {
     // Recognize all .wav files in folder
     void TestFolder(DataBase& db_, const std::filesystem::path& folder_path);
 }
+
+#endif // SHASHMAQAMFINDER_DATABASE_UTILS_HPP_

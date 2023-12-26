@@ -89,7 +89,7 @@ void DataBase::ExecuteQuery(const std::string& query) {
   int64_t rc = sqlite3_exec(db_, query.c_str(), nullptr, nullptr, nullptr);
 
   if (rc != SQLITE_OK) {
-    std::cerr << query.c_str() << '\n';
+    LOG_TRACE("SQL statement = ", query.c_str());
     throw std::runtime_error("Query execution failed: " +
                              std::string(sqlite3_errmsg(db_)));
   }
@@ -124,11 +124,10 @@ std::optional<Song> DataBase::GetSongById(const int64_t id) const {
       sqlite3_finalize(statement);
       return song;
     } else {
-      std::cerr << "No song found with ID: " << id << std::endl;
+      LOG_ERROR("No song found with ID: ", id);
     }
   } else {
-    std::cerr << "Error preparing SQL statement: " << sqlite3_errmsg(db_)
-              << std::endl;
+    LOG_ERROR("Error preparing SQL statement: ", sqlite3_errmsg(db_));
   }
 
   return std::nullopt;
@@ -165,16 +164,14 @@ void DataBase::ProcessHashValuesBatch(
   sqlite3_stmt* statement;
   if (sqlite3_prepare_v2(db_, query.c_str(), -1, &statement, nullptr) !=
       SQLITE_OK) {
-    std::cerr << "Error preparing SQL statement: " << sqlite3_errmsg(db_)
-              << std::endl;
+    LOG_ERROR("Error preparing SQL statement: ", sqlite3_errmsg(db_));
     return;
   }
 
   for (size_t i = 0; i < hashValues.size(); ++i) {
     if (sqlite3_bind_text(statement, i + 1, hashValues[i].first.c_str(), -1,
                           SQLITE_STATIC) != SQLITE_OK) {
-      std::cerr << "Error binding SQL statement: " << sqlite3_errmsg(db_)
-                << std::endl;
+      LOG_ERROR("Error binding SQL statement: ", sqlite3_errmsg(db_));
       return;
     }
   }
@@ -248,10 +245,7 @@ std::optional<Song> DataBase::getBestMatch(
 
     std::optional<Song> song = GetSongById(song_id);
 
-    LOG_TRACE(song->getArtist(), "-" ,song->getTitle(), "=", score);
-
-    // std::cout << song->getArtist() << " " << song->getTitle() << " - " << score
-    //           << std::endl;
+    LOG_TRACE(song->getArtist(), "-", song->getTitle(), "=", score);
 
     if (score > best_score) {
       best_score = score;
@@ -281,8 +275,7 @@ int64_t DataBase::getSongRowCount() const {
 
     return rowCount;
   } else {
-    std::cerr << "Error executing COUNT statement: " << sqlite3_errmsg(db_)
-              << std::endl;
+    LOG_ERROR("Error executing COUNT statement: ", sqlite3_errmsg(db_));
   }
   sqlite3_finalize(statement);
   return -1;
